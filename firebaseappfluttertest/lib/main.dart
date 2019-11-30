@@ -3,14 +3,16 @@ import 'package:firebaseappfluttertest/CoffeeModel.dart';
 import 'package:firebaseappfluttertest/LocationService.dart';
 import 'package:firebaseappfluttertest/Locator.dart';
 import 'package:firebaseappfluttertest/UserLocation.dart';
+import 'package:firebaseappfluttertest/widgets/CoffeListElementWidget.dart';
+import 'package:firebaseappfluttertest/widgets/WorkingTimeWidget.dart';
 import 'package:flutter/material.dart';
 
 void main() {
   setupLocator();
-  runApp(MyApp());
+  runApp(CoffeeList());
 }
 
-class MyApp extends StatelessWidget {
+class CoffeeList extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -28,13 +30,13 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Coffice'),
+      home: CoffeeListPage(title: 'Coffice'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class CoffeeListPage extends StatefulWidget {
+  CoffeeListPage({Key key, this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -48,12 +50,13 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _CoffeeListPageState createState() => _CoffeeListPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _CoffeeListPageState extends State<CoffeeListPage> {
   final db = Firestore.instance;
   var coffeePlaces = [];
+
   UserLocation userLocation;
   var locationService = locator<LocationService>();
 
@@ -72,6 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
         final coffeeModel = CoffeeModel.fromJson(coffeePlace.data);
         setState(() {
           coffeePlaces.add(coffeeModel);
+          //TODO: Fix sort
 //          coffeePlaces.sort((firstCoffee, secondCoffee) {
 //            return firstCoffee.coffee_name.comparedTo(secondCoffee.coffee_name);
 //          });
@@ -101,105 +105,20 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: (userLocation == null)
-          ? Center(child: Text("Loading"))
+          ? Center(child: Text("Fetching Location..."))
           : ListView.builder(
               itemCount: coffeePlaces.length,
               itemBuilder: (context, position) {
-                return Padding(
-                  padding:
-                      const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
-                  child: Container(
-                    height: 120,
-                    decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xEDEDEDED),
-                            blurRadius: 1.5,
-                            spreadRadius: 1.5,
-                          )
-                        ],
-                        color: const Color(0xFFFCFDFD),
-                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Column(
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(10.0),
-                                    bottomLeft: Radius.circular(10.0)),
-                                child: Image.network(
-                                  coffeePlaces[position].coffee_image_url,
-                                  fit: BoxFit.fitHeight,
-                                  width: 120,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              SizedBox(
-                                child: Text(
-                                  coffeePlaces[position].coffee_name,
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                width: 150,
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 8.0),
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Container(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: Text(
-                                        "Затворено",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white),
-                                      ),
-                                    ),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(8.0)),
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 20.0),
-                                  ),
-                                  Text(
-                                    "${locationService.calculateDistance(coffeePlaces[position].lat, coffeePlaces[position].long, userLocation.latitude, userLocation.longitude)} KM",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Spacer(),
-                        Icon(
-                          Icons.audiotrack,
-                          color: Colors.green,
-                          size: 30.0,
-                        ),
-                      ],
-                    ),
-                  ),
+                final coffeePlace = coffeePlaces[position];
+                final coffeeDistance = locationService.calculateDistance(
+                    coffeePlace.lat,
+                    coffeePlace.long,
+                    userLocation.latitude,
+                    userLocation.longitude);
+
+                return CoffeeListElement(
+                  coffeePlace: coffeePlace,
+                  distance: coffeeDistance,
                 );
               }), // This trailing comma makes auto-formatting nicer for build methods.
     );
