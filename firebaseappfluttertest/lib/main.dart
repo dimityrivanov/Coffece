@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebaseappfluttertest/CoffeeModel.dart';
 import 'package:firebaseappfluttertest/LocationService.dart';
 import 'package:firebaseappfluttertest/Locator.dart';
+import 'package:firebaseappfluttertest/UserLocation.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -53,15 +54,17 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final db = Firestore.instance;
   var coffeePlaces = [];
+  UserLocation userLocation;
+  var locationService = locator<LocationService>();
 
   @override
   void initState() {
     super.initState();
 
-    var location = locator<LocationService>().getLocation();
-
-    location.then((userLocation) {
-      var mitko = 5;
+    locationService.getLocation().then((userLocation) {
+      setState(() {
+        this.userLocation = userLocation;
+      });
     });
 
     db.collection("Sofia").snapshots().listen((snapshot) {
@@ -69,6 +72,9 @@ class _MyHomePageState extends State<MyHomePage> {
         final coffeeModel = CoffeeModel.fromJson(coffeePlace.data);
         setState(() {
           coffeePlaces.add(coffeeModel);
+//          coffeePlaces.sort((firstCoffee, secondCoffee) {
+//            return firstCoffee.coffee_name.comparedTo(secondCoffee.coffee_name);
+//          });
         });
       });
     });
@@ -94,105 +100,108 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: ListView.builder(
-          itemCount: coffeePlaces.length,
-          itemBuilder: (context, position) {
-            return Padding(
-              padding:
-                  const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
-              child: Container(
-                height: 120,
-                decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xEDEDEDED),
-                        blurRadius: 1.5,
-                        spreadRadius: 1.5,
-                      )
-                    ],
-                    color: const Color(0xFFFCFDFD),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Column(
+      body: (userLocation == null)
+          ? Center(child: Text("Loading"))
+          : ListView.builder(
+              itemCount: coffeePlaces.length,
+              itemBuilder: (context, position) {
+                return Padding(
+                  padding:
+                      const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+                  child: Container(
+                    height: 120,
+                    decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xEDEDEDED),
+                            blurRadius: 1.5,
+                            spreadRadius: 1.5,
+                          )
+                        ],
+                        color: const Color(0xFFFCFDFD),
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    child: Row(
                       mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(10.0),
-                                bottomLeft: Radius.circular(10.0)),
-                            child: Image.network(
-                              coffeePlaces[position].coffee_image_url,
-                              fit: BoxFit.fitHeight,
-                              width: 120,
+                        Column(
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10.0),
+                                    bottomLeft: Radius.circular(10.0)),
+                                child: Image.network(
+                                  coffeePlaces[position].coffee_image_url,
+                                  fit: BoxFit.fitHeight,
+                                  width: 120,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          SizedBox(
-                            child: Text(
-                              coffeePlaces[position].coffee_name,
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            width: 150,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 8.0),
-                          ),
-                          Row(
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Container(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: Text(
-                                    "Затворено",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white),
-                                  ),
+                              SizedBox(
+                                child: Text(
+                                  coffeePlaces[position].coffee_name,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8.0)),
-                                  color: Colors.red,
-                                ),
+                                width: 150,
                               ),
                               Padding(
-                                padding: EdgeInsets.only(left: 20.0),
+                                padding: EdgeInsets.only(bottom: 8.0),
                               ),
-                              Text(
-                                "3.4 Miles",
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                              Row(
+                                children: <Widget>[
+                                  Container(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Text(
+                                        "Затворено",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white),
+                                      ),
+                                    ),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(8.0)),
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 20.0),
+                                  ),
+                                  Text(
+                                    "${locationService.calculateDistance(coffeePlaces[position].lat, coffeePlaces[position].long, userLocation.latitude, userLocation.longitude)} KM",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                        Spacer(),
+                        Icon(
+                          Icons.audiotrack,
+                          color: Colors.green,
+                          size: 30.0,
+                        ),
+                      ],
                     ),
-                    Spacer(),
-                    Icon(
-                      Icons.audiotrack,
-                      color: Colors.green,
-                      size: 30.0,
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }), // This trailing comma makes auto-formatting nicer for build methods.
+                  ),
+                );
+              }), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

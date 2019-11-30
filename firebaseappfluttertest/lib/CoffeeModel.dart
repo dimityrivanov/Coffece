@@ -32,8 +32,8 @@ class CoffeeModel {
       coffee_payment: json['coffee_payment'],
       coffee_phone: json['coffee_phone'],
       coffee_working_time: json['coffee_working_time'],
-      lat: json['lat'],
-      long: json['long'],
+      lat: json['Lat'],
+      long: json['Long'],
     );
   }
 
@@ -47,8 +47,8 @@ class CoffeeModel {
     data['coffee_payment'] = this.coffee_payment;
     data['coffee_phone'] = this.coffee_phone;
     data['coffee_working_time'] = this.coffee_working_time;
-    data['lat'] = this.lat;
-    data['long'] = this.long;
+    data['Lat'] = this.lat;
+    data['Long'] = this.long;
     return data;
   }
 }
