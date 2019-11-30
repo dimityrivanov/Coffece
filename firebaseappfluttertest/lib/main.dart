@@ -1,11 +1,11 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebaseappfluttertest/CoffeeModel.dart';
+import 'package:firebaseappfluttertest/LocationService.dart';
+import 'package:firebaseappfluttertest/Locator.dart';
 import 'package:flutter/material.dart';
-import 'package:location/location.dart';
 
 void main() {
+  setupLocator();
   runApp(MyApp());
 }
 
@@ -52,14 +52,17 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final db = Firestore.instance;
-  LocationData currentLocation;
-  var location = new Location();
   var coffeePlaces = [];
 
   @override
   void initState() {
     super.initState();
-    getLocation();
+
+    var location = locator<LocationService>().getLocation();
+
+    location.then((userLocation) {
+      var mitko = 5;
+    });
 
     db.collection("Sofia").snapshots().listen((snapshot) {
       snapshot.documents.forEach((coffeePlace) {
@@ -68,22 +71,6 @@ class _MyHomePageState extends State<MyHomePage> {
           coffeePlaces.add(coffeeModel);
         });
       });
-    });
-  }
-
-  void getLocation() async {
-    try {
-      currentLocation = await location.getLocation();
-    } catch (e) {
-      if (e.code == 'PERMISSION_DENIED') {
-        print("Permission denied");
-        //error = 'Permission denied';
-      }
-      currentLocation = null;
-    }
-
-    location.onLocationChanged().listen((LocationData currentLocation) {
-      this.currentLocation = currentLocation;
     });
   }
 
