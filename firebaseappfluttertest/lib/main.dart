@@ -58,7 +58,7 @@ class CoffeeListPage extends StatefulWidget {
 
 class _CoffeeListPageState extends State<CoffeeListPage> {
   final db = Firestore.instance;
-  var coffeePlaces = [];
+  List<CoffeeModel> coffeePlaces = [];
 
   UserLocation userLocation;
   var locationService = locator<LocationService>();
@@ -78,11 +78,21 @@ class _CoffeeListPageState extends State<CoffeeListPage> {
       snapshot.documents.forEach((coffeePlace) {
         final coffeeModel = CoffeeModel.fromJson(coffeePlace.data);
         setState(() {
-          coffeePlaces.add(coffeeModel);
+          coffeePlaces.addAll([coffeeModel]);
           //TODO: Fix sort
-//          coffeePlaces.sort((firstCoffee, secondCoffee) {
-//            return firstCoffee.coffee_name.comparedTo(secondCoffee.coffee_name);
-//          });
+          coffeePlaces.sort((firstCoffee, secondCoffee) {
+//            var firstCoffeLocation = new UserLocation(
+//              latitude: firstCoffee.lat,
+//              longitude: firstCoffee.long,
+//            );
+//
+//            var secondCoffeLocation = new UserLocation(
+//              latitude: secondCoffee.lat,
+//              longitude: secondCoffee.long,
+//            );
+            
+            return firstCoffee.coffee_name.compareTo(secondCoffee.coffee_name);
+          });
         });
       });
     });
