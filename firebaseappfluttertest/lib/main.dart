@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebaseappfluttertest/CoffeeListNewElementWidget.dart';
 import 'package:firebaseappfluttertest/CoffeeModel.dart';
+import 'package:firebaseappfluttertest/Details.dart';
 import 'package:firebaseappfluttertest/LocationService.dart';
 import 'package:firebaseappfluttertest/Locator.dart';
 import 'package:firebaseappfluttertest/UserLocation.dart';
+import 'package:firebaseappfluttertest/extents_page_view.dart';
 import 'package:firebaseappfluttertest/widgets/CoffeListElementWidget.dart';
-import 'package:firebaseappfluttertest/widgets/WorkingTimeWidget.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -59,6 +62,7 @@ class _CoffeeListPageState extends State<CoffeeListPage> {
 
   UserLocation userLocation;
   var locationService = locator<LocationService>();
+  final _controller = PageController(viewportFraction: 1.0);
 
   @override
   void initState() {
@@ -89,38 +93,55 @@ class _CoffeeListPageState extends State<CoffeeListPage> {
     super.dispose();
   }
 
+  Widget _coffeeUI() {
+    return ListView.builder(
+      itemCount: coffeePlaces.length,
+      itemBuilder: (BuildContext context, int index) {
+        return _getCoffeeElement(coffeePlaces[index]);
+      },
+    );
+  }
+
+  Widget _getCoffeeAnimation() {
+    return Center(
+        child: FlareActor(
+      "assets/coffee.flr",
+      alignment: Alignment.center,
+      fit: BoxFit.contain,
+      animation: "heat",
+    ));
+  }
+
+  Widget _getCoffeeElement(coffeeShop) {
+    final coffeeDistance = locationService.calculateDistance(coffeeShop.lat,
+        coffeeShop.long, userLocation.latitude, userLocation.longitude);
+
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () => {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => DetailsScreen(
+                      coffeePlace: coffeeShop,
+                    )))
+      },
+      child: CoffeeListElement(
+        coffeePlace: coffeeShop,
+        distance: coffeeDistance,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      backgroundColor: Color(0xFFF4F6F7),
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
       body: (userLocation == null)
-          ? Center(child: Text("Fetching Location..."))
-          : ListView.builder(
-              itemCount: coffeePlaces.length,
-              itemBuilder: (context, position) {
-                final coffeePlace = coffeePlaces[position];
-                final coffeeDistance = locationService.calculateDistance(
-                    coffeePlace.lat,
-                    coffeePlace.long,
-                    userLocation.latitude,
-                    userLocation.longitude);
-
-                return CoffeeListElement(
-                  coffeePlace: coffeePlace,
-                  distance: coffeeDistance,
-                );
-              }), // This trailing comma makes auto-formatting nicer for build methods.
+          ? Center(
+              child: CircularProgressIndicator(
+              backgroundColor: Colors.red,
+            ))
+          : _coffeeUI(), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

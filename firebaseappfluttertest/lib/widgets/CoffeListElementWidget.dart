@@ -37,10 +37,13 @@ class CoffeeListElement extends StatelessWidget {
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(10.0),
                         bottomLeft: Radius.circular(10.0)),
-                    child: Image.network(
-                      coffeePlace.coffee_image_url,
-                      fit: BoxFit.fitHeight,
-                      width: 120,
+                    child: Hero(
+                      tag: coffeePlace.coffee_name,
+                      child: Image.network(
+                        coffeePlace.coffee_image_url,
+                        fit: BoxFit.fitHeight,
+                        width: 120,
+                      ),
                     ),
                   ),
                 ),
