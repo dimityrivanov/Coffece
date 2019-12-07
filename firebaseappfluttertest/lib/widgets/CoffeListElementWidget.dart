@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class CoffeeListElement extends StatelessWidget {
   final coffeePlace;
-  final distance;
+  final double distance;
 
   CoffeeListElement({this.coffeePlace, this.distance});
 
@@ -73,7 +73,7 @@ class CoffeeListElement extends StatelessWidget {
                         padding: EdgeInsets.only(left: 20.0),
                       ),
                       Text(
-                        "$distance KM",
+                        "${distance.toStringAsFixed(2)} KM",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
