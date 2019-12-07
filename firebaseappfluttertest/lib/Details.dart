@@ -33,8 +33,8 @@ class DetailsScreen extends StatelessWidget {
                     child: ClipRRect(
                       clipBehavior: Clip.hardEdge,
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20.0),
-                        bottomLeft: Radius.circular(20.0),
+                        topLeft: Radius.circular(10.0),
+                        bottomLeft: Radius.circular(30.0),
                       ),
                       child: Image.network(
                         coffeePlace.coffee_image_url,
