@@ -10,19 +10,9 @@ class CoffeeListElement extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+      padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0),
       child: Container(
-        height: 120,
-        decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xEDEDEDED),
-                blurRadius: 1.5,
-                spreadRadius: 1.5,
-              )
-            ],
-            color: const Color(0xFFFCFDFD),
-            borderRadius: BorderRadius.all(Radius.circular(10.0))),
+        height: 100,
         child: Row(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -34,15 +24,15 @@ class CoffeeListElement extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                   child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10.0),
-                        bottomLeft: Radius.circular(10.0)),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10.0),
+                    ),
                     child: Hero(
                       tag: coffeePlace.coffee_name,
                       child: Image.network(
                         coffeePlace.coffee_image_url,
                         fit: BoxFit.fitHeight,
-                        width: 120,
+                        width: 100,
                       ),
                     ),
                   ),
@@ -50,16 +40,17 @@ class CoffeeListElement extends StatelessWidget {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 16.0),
+              padding: const EdgeInsets.only(left: 16.0, top: 4.0),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   SizedBox(
                     child: Text(
                       coffeePlace.coffee_name,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                     width: 150,
                   ),
@@ -68,14 +59,24 @@ class CoffeeListElement extends StatelessWidget {
                   ),
                   Row(
                     children: <Widget>[
-                      WorkingTimeWidget(isOpened: false),
+                      Row(
+                        children: <Widget>[
+                          Image.asset(
+                            "assets/car.png",
+                            width: 10,
+                            height: 10,
+                          ),
+                          Text(
+                            " $distance km",
+                            style: TextStyle(
+                                fontWeight: FontWeight.normal, fontSize: 12),
+                          ),
+                        ],
+                      ),
                       Padding(
                         padding: EdgeInsets.only(left: 20.0),
                       ),
-                      Text(
-                        "$distance KM",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                      WorkingTimeWidget(isOpened: false),
                     ],
                   ),
                 ],
