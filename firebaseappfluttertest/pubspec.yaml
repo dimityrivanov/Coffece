@@ -28,6 +28,8 @@ dependencies:
   get_it: ^3.0.3
   flare_flutter: ^1.7.3
   transparent_image: ^1.0.0
+  great_circle_distance: ^1.0.1
+
 
 dev_dependencies:
   flutter_test:

@@ -9,6 +9,10 @@ import 'package:firebaseappfluttertest/extents_page_view.dart';
 import 'package:firebaseappfluttertest/widgets/CoffeListElementWidget.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
+import 'dart:math';
+
+import 'package:great_circle_distance/great_circle_distance.dart';
+
 
 void main() {
   setupLocator();
@@ -79,23 +83,34 @@ class _CoffeeListPageState extends State<CoffeeListPage> {
         final coffeeModel = CoffeeModel.fromJson(coffeePlace.data);
         setState(() {
           coffeePlaces.addAll([coffeeModel]);
-          //TODO: Fix sort
-          coffeePlaces.sort((firstCoffee, secondCoffee) {
-//            var firstCoffeLocation = new UserLocation(
-//              latitude: firstCoffee.lat,
-//              longitude: firstCoffee.long,
-//            );
-//
-//            var secondCoffeLocation = new UserLocation(
-//              latitude: secondCoffee.lat,
-//              longitude: secondCoffee.long,
-//            );
-            
-            return firstCoffee.coffee_name.compareTo(secondCoffee.coffee_name);
+
+          coffeePlaces.sort((a, b) {
+            var distance1 = new GreatCircleDistance.fromDegrees(
+                latitude1: 42.6641569,
+                longitude1: 23.287911,
+                latitude2: a.lat,
+                longitude2: a.long);
+
+            var totaldistance1 = distance1.haversineDistance().toStringAsFixed(2);
+            double distanceDouble1 = double.parse(totaldistance1);
+
+            var distance2 = new GreatCircleDistance.fromDegrees(
+                latitude1: 42.6641569,
+                longitude1: 23.287911,
+                latitude2: b.lat,
+                longitude2: b.long);
+
+            var totaldistance2 = distance2.haversineDistance().toStringAsFixed(2);
+            double distanceDouble2 = double.parse(totaldistance2);
+
+            return (distanceDouble1 - distanceDouble2).toInt();
+          });
+
+
+          //42.6641569, 23.287911
           });
         });
       });
-    });
   }
 
   @override
