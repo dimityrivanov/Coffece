@@ -71,8 +71,8 @@ class _CoffeeListPageState extends State<CoffeeListPage> {
     if (userLocation != null) {
       coffeePlaces.sort((a, b) {
         var distance1 = new GreatCircleDistance.fromDegrees(
-            latitude1: 42.6641569,
-            longitude1: 23.287911,
+            latitude1: userLocation.latitude,
+            longitude1: userLocation.longitude,
             latitude2: a.lat,
             longitude2: a.long);
 
@@ -80,8 +80,8 @@ class _CoffeeListPageState extends State<CoffeeListPage> {
         double distanceDouble1 = double.parse(totaldistance1);
 
         var distance2 = new GreatCircleDistance.fromDegrees(
-            latitude1: 42.6641569,
-            longitude1: 23.287911,
+            latitude1: userLocation.latitude,
+            longitude1: userLocation.longitude,
             latitude2: b.lat,
             longitude2: b.long);
 
