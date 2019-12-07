@@ -13,7 +13,6 @@ import 'dart:math';
 
 import 'package:great_circle_distance/great_circle_distance.dart';
 
-
 void main() {
   setupLocator();
   runApp(CoffeeList());
@@ -68,6 +67,38 @@ class _CoffeeListPageState extends State<CoffeeListPage> {
   var locationService = locator<LocationService>();
   final _controller = PageController(viewportFraction: 1.0);
 
+  _sortElements() {
+    if (userLocation != null) {
+      coffeePlaces.sort((a, b) {
+        var distance1 = new GreatCircleDistance.fromDegrees(
+            latitude1: 42.6641569,
+            longitude1: 23.287911,
+            latitude2: a.lat,
+            longitude2: a.long);
+
+        var totaldistance1 = distance1.haversineDistance().toStringAsFixed(2);
+        double distanceDouble1 = double.parse(totaldistance1);
+
+        var distance2 = new GreatCircleDistance.fromDegrees(
+            latitude1: 42.6641569,
+            longitude1: 23.287911,
+            latitude2: b.lat,
+            longitude2: b.long);
+
+        var totaldistance2 = distance2.haversineDistance().toStringAsFixed(2);
+        double distanceDouble2 = double.parse(totaldistance2);
+        //4km - 2 = 2
+        if (distanceDouble1 == distanceDouble2) return 0;
+
+        if (distanceDouble2 > distanceDouble1) return -1;
+
+        if (distanceDouble1 > distanceDouble2) return 1;
+
+        return 0;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -75,6 +106,7 @@ class _CoffeeListPageState extends State<CoffeeListPage> {
     locationService.getLocation().then((userLocation) {
       setState(() {
         this.userLocation = userLocation;
+        _sortElements();
       });
     });
 
@@ -83,44 +115,11 @@ class _CoffeeListPageState extends State<CoffeeListPage> {
         final coffeeModel = CoffeeModel.fromJson(coffeePlace.data);
         setState(() {
           coffeePlaces.addAll([coffeeModel]);
-
-          coffeePlaces.sort((a, b) {
-            var distance1 = new GreatCircleDistance.fromDegrees(
-                latitude1: 42.6641569,
-                longitude1: 23.287911,
-                latitude2: a.lat,
-                longitude2: a.long);
-
-            var totaldistance1 = distance1.haversineDistance().toStringAsFixed(2);
-            double distanceDouble1 = double.parse(totaldistance1);
-
-            var distance2 = new GreatCircleDistance.fromDegrees(
-                latitude1: 42.6641569,
-                longitude1: 23.287911,
-                latitude2: b.lat,
-                longitude2: b.long);
-
-            var totaldistance2 = distance2.haversineDistance().toStringAsFixed(2);
-            double distanceDouble2 = double.parse(totaldistance2);
-            //4km - 2 = 2
-            if(distanceDouble1 == distanceDouble2)
-              return 0;
-
-            if(distanceDouble2 > distanceDouble1)
-              return -1;
-
-            if(distanceDouble1 > distanceDouble2)
-              return 1;
-
-
-            return 0;
-          });
-
-
+          _sortElements();
           //42.6641569, 23.287911
-          });
         });
       });
+    });
   }
 
   @override
