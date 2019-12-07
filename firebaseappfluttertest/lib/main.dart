@@ -102,8 +102,18 @@ class _CoffeeListPageState extends State<CoffeeListPage> {
 
             var totaldistance2 = distance2.haversineDistance().toStringAsFixed(2);
             double distanceDouble2 = double.parse(totaldistance2);
+            //4km - 2 = 2
+            if(distanceDouble1 == distanceDouble2)
+              return 0;
 
-            return (distanceDouble1 - distanceDouble2).toInt();
+            if(distanceDouble2 > distanceDouble1)
+              return -1;
+
+            if(distanceDouble1 > distanceDouble2)
+              return 1;
+
+
+            return 0;
           });
 
 
