@@ -68,7 +68,8 @@ class CoffeeListElement extends StatelessWidget {
                           ),
                           Text(
                             "${distance.toStringAsFixed(2)} KM",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontWeight: FontWeight.normal, fontSize: 12),
                           ),
                         ],
                       ),
