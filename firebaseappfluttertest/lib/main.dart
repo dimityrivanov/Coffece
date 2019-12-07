@@ -65,7 +65,6 @@ class _CoffeeListPageState extends State<CoffeeListPage> {
 
   UserLocation userLocation;
   var locationService = locator<LocationService>();
-  final _controller = PageController(viewportFraction: 1.0);
 
   _sortElements() {
     if (userLocation != null) {
@@ -118,7 +117,6 @@ class _CoffeeListPageState extends State<CoffeeListPage> {
         setState(() {
           coffeePlaces.addAll([coffeeModel]);
           _sortElements();
-          //42.6641569, 23.287911
         });
       });
     });
@@ -131,9 +129,22 @@ class _CoffeeListPageState extends State<CoffeeListPage> {
 
   Widget _coffeeUI() {
     return ListView.builder(
-      itemCount: coffeePlaces.length,
+      itemCount: coffeePlaces.length + 1,
       itemBuilder: (BuildContext context, int index) {
-        return _getCoffeeElement(coffeePlaces[index]);
+        if (index == 0) {
+          return Padding(
+            padding: const EdgeInsets.only(left: 20.0, top: 20.0),
+            child: Text(
+              "Наоколо",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 28),
+            ),
+          );
+        } else {
+          return _getCoffeeElement(coffeePlaces[index - 1]);
+        }
       },
     );
   }
@@ -172,11 +183,9 @@ class _CoffeeListPageState extends State<CoffeeListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: (userLocation == null)
-          ? Center(
-              child: CircularProgressIndicator(
-              backgroundColor: Colors.red,
-            ))
+          ? Center(child: _getCoffeeAnimation())
           : _coffeeUI(), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }

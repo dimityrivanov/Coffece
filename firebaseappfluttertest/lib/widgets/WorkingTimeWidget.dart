@@ -14,7 +14,8 @@ class WorkingTimeWidget extends StatelessWidget {
         padding: const EdgeInsets.all(4.0),
         child: Text(
           isOpened ? opened : closed,
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: Colors.white, fontSize: 12),
         ),
       ),
       decoration: BoxDecoration(
